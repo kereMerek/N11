@@ -65,7 +65,7 @@
         .pixel-box::after  { bottom: -3px; right: -3px; }
 
         /* =====================================================================
-           BAŞLANGIÇ EKRANI (RETRO TITLE SCREEN)
+           BAŞLANGIÇ MESAJI
            ===================================================================== */
         #startScreen {
             position: fixed;
@@ -73,12 +73,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             background: #04020c;
             z-index: 100;
-            cursor: pointer;
             transition: opacity 1.2s steps(8, end);
-            padding: 1.5rem;
+            padding: max(1.5rem, env(safe-area-inset-top)) 1.25rem max(1.5rem, env(safe-area-inset-bottom));
+            overflow-y: auto;
+            touch-action: pan-y;
+            -webkit-overflow-scrolling: touch;
         }
 
         #startScreen.hidden {
@@ -96,11 +98,26 @@
             animation: blinkBadge 2s infinite steps(2, start);
         }
 
+        #startScreen .letter-box {
+            width: min(100%, 680px);
+            margin: auto;
+            flex: 0 0 auto;
+        }
+
         #startScreen .message {
             color: #fff4e0;
-            font-size: clamp(15px, 4.2vw, 22px);
-            text-align: center;
+            font-size: clamp(12px, 3.2vw, 16px);
+            text-align: left;
+            line-height: 1.9;
+            text-shadow: 2px 2px 0px #000000;
+        }
+
+        #startScreen .signature {
+            color: #70d6ff;
+            font-size: clamp(12px, 3.2vw, 16px);
             line-height: 1.8;
+            margin-top: 1.5rem;
+            text-align: right;
             text-shadow: 2px 2px 0px #000000;
         }
 
@@ -116,6 +133,8 @@
             animation: retroBlink 1.2s steps(2, start) infinite;
             text-align: center;
             line-height: 1.6;
+            cursor: pointer;
+            touch-action: manipulation;
         }
 
         /* =====================================================================
@@ -278,15 +297,13 @@
 </head>
 <body>
 
-    <!-- Başlangıç Ekranı -->
+    <!-- Başlangıç Mesajı -->
     <div id="startScreen">
-        <div class="title-badge">★ ÇANA KÜÇÜK BİR SÜPYİZZZZ ★</div>
-        <div class="pixel-box">
-            <p class="message">Sana özel bişeyimm vayyyyy...</p>
+        <div class="pixel-box letter-box">
+            <p class="message">Seni iyi hissettireceğini düşünerek yaptığım sitelerden biri. Hatta bunu yaparken stajdaydım ve senin okuldan çıkmana az bi süre vardı. Bende çok fazla fikir bulamayıp böyle bişey yapmıştım. Sana bu siteyi attığımda o mutluluğunu hissettiğimde yüzünde az da olsa bi gülümseme olduğunu anladığımda çok sevinmiştim. Senin için yorucu ve kötü bi gündü ve sen o kadar yorgunken güldürmeyi yine başarmıştım ama şimdi ise seni ne kadar özlesem de yanında olmak istesem de olamıyorum seni yine güldüremiyorum. Kim bilir neler neler dilemiştin üflerken hatta bana en büyük dileğim sendin demiştin ama sanırım artık en büyük dileğin beni tamamen unutmak. Belki yanında değilim ama hala söz verdiğim gibi dileklerini gerçekleştirmek için elimden gelen bütün her şeyi yapıcam. Gerekirse yine sana iyi gelebildikten sonra köşeme çekilir öylece senin mutluluğunu izlerim. Sonsuz dilek hakkım olsa yine seni dilerim. Eğer yazdığım şeyler senin daha da canını acıtıyosa iyi hatırlamak için baktığın anılara benim yüzümden bakamıyosan söyle sen nasıl uygun görürsen öyle yaparım her şeyin en doğrusunu sen bilirsin...</p>
+            <p class="signature">-Seni çok özleyen Kerem</p>
         </div>
-        <div class="tap-hint">
-            ▶ DOKUN VE OLACAKLAYII GÖYY AŞKIMMMM ◀
-        </div>
+        <button class="tap-hint" type="button">Devam etmek için tıkla</button>
     </div>
 
     <!-- Canvas (Pixel Art Sahnesi) -->
@@ -1209,8 +1226,9 @@
             requestAnimationFrame(loop);
         }
 
-        startEl.addEventListener('touchstart', go, { passive: false });
-        startEl.addEventListener('click', go);
+        var continueButton = startEl.querySelector('.tap-hint');
+        continueButton.addEventListener('touchstart', go, { passive: false });
+        continueButton.addEventListener('click', go);
 
         window.addEventListener('resize', function () {
             if (state === S.INTRO) return;
